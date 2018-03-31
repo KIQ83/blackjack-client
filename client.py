@@ -55,10 +55,8 @@ def _recv(socket):
 	# read the length of the data, letter by letter until we reach EOL
 	length = int(socket.recv(4))
 
-	messageInBytes = socket.recv(length)
-	deserialized = json.loads(fullMessage)
 	try:
-		deserialized = json.loads(fullMessage)
+		deserialized = json.loads(socket.recv(length))
 	except (TypeError, ValueError):
 		raise Exception('Data received was not in JSON format')
 	return deserialized
