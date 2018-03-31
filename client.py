@@ -64,22 +64,19 @@ def _recv(socket):
 class Player:
 	def __init__(self):
 		self.client = Client()
-
-	def start(self):
 		self.client.connect()
-		print('Conectado')
 
 	def register(self, playerName = 'Jogador'):
 		self.client.send(formatter.formatRegister(playerName))
-		print(self.client.recv())
+		return self.client.recv()
 
 	def hit(self):
 		self.client.send(formatter.formatHit())
-		print(self.client.recv())
+		return self.client.recv()
 
 	def stand(self):
 		self.client.send(formatter.formatStand())
-		print(self.client.recv())
+		return self.client.recv()
 	
 	def updateMe(self):
 		print('me atualiza')
