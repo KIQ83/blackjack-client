@@ -3,6 +3,7 @@ import time
 import random
 
 def registerMyself(bot):
+    print("--------------  NEW GAME --------------")
     print("Registering myself")
     bot.register('KIQ')
 
@@ -35,9 +36,10 @@ def awaitGameFinish(bot):
 def play(bot):
     print("Heart of the cards, don't disappoint me!")
     table = bot.tableState()
+    printDealerShownCard(table['dealer'])
     player = findPlayer(table['players'], bot.name)
+    printMyCards(player['pile'])
     while (player['state'] == 'Playing'):
-        print("These are my cards:" + str(player['pile']))
         shouldStand = bool(random.getrandbits(1))
         if (shouldStand):
             print("I'll stand for now. Let's hope for the best")
@@ -50,17 +52,22 @@ def play(bot):
         time.sleep(1)
         table = bot.tableState()
         player = findPlayer(table['players'], bot.name)
+        printMyCards(player['pile'])
 
     print("Ok, that's it for me. I finish my play")
 
 def checkResult(bot):
+    print("Checking results")
     table = bot.tableState()
     player = findPlayer(table['players'], bot.name)
+    dealer = table['dealer']
+    printFullDealer(dealer)
+    printMyCards(player['pile'])
     winner = player['state'] == 'Winner'
     if (winner):
         print("Daddy, I won!")
     else:
-        print("I'll do better next time..")
+        print("I lost.. I'll do better next time..")
 
 def leaveGame(bot):
     print("That's it. I'm out")
@@ -71,11 +78,62 @@ def findPlayer(playersList, playerName):
         if player['name'] == playerName:
             return player
 
-def sumCards(cards):
-    print("sum")
+def printMyCards(cards):
+    print("These are my cards:")
+    printCards(cards)
 
-def simpleSum(cards):
-    print("Simple sum")
+def printDealerShownCard(dealer):
+    print('Dealer has: ' + cardDisplay(dealer['shown']))
+
+def printFullDealer(dealer):
+    dealerCards = [dealer['shown'], dealer['hidden']]
+    print('Dealer cards: ')
+    printCards(dealerCards)
+
+def printCards(cards):
+    cardSum = sumCards(cards)
+    cardsDisplay = ''
+    for card in cards:
+        cardsDisplay += cardDisplay(card) + ","
+    print(cardsDisplay + " that gives a total of " + str(cardSum))
+
+
+def cardDisplay(card):
+    return str(getCardSymbol(card['number'])) + card['suit'] 
+
+def getCardSymbol(cardIndex):
+    if cardIndex == 0:
+        return 'A'
+    elif cardIndex == 10:
+        return 'J'
+    elif cardIndex == 11:
+        return 'Q'
+    elif cardIndex == 12:
+        return 'K'
+    else:
+        return str(cardIndex + 1)
+
+def getCardSumValue(cardIndex):
+    # figure Cards are worth 10
+    if cardIndex in (10, 13):
+        return 10
+    else:
+        return cardIndex + 1
+
+def sumCards(cards):
+    cardValues = [getCardSumValue(card['number']) for card in cards]
+    simpleSum = sum(cardValues)
+    hasAce = containsAce([card['number'] for card in cards])
+    # will use ace as 11 only if has ace and if sum does not exceed 21
+    usableAce = hasAce and (simpleSum + 10) <= 21
+    if usableAce:
+        return simpleSum + 10
+    else:
+        return simpleSum
+
+    
+def containsAce(cardsIndexes):
+    return 0 in cardsIndexes
 
 numberOfGames = 2
 bot = Player()
