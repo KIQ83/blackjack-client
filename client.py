@@ -98,6 +98,7 @@ def _readNumber(socket):
 
 class Player:
 	connected = False
+	name = None
 
 	def connect(self):
 		if (self.connected == False):
@@ -107,22 +108,34 @@ class Player:
 
 	def register(self, playerName = 'Jogador'):
 		self.connect()
+		self.name = playerName
 		self.client.send(formatter.formatRegister(playerName))
 		return self.client.recv()
 
 	def hit(self):
+		self._ensureConnection()
 		self.client.send(formatter.formatHit())
 		return self.client.recv()
 
 	def stand(self):
+		self._ensureConnection()
 		self.client.send(formatter.formatStand())
 		return self.client.recv()
 	
 	def tableState(self):
+		self._ensureConnection()
 		self.client.recv()
 		return self.client.table
 
 	def close(self):
+		self._ensureConnection()
 		self.client.close()
 		self.connected = False
 		self.client = None
+		self.name = None
+
+	def _ensureConnection(self):
+		if (self.connected == False):
+			print("Must register before performing this action")
+			raise Exception('Invalid action')
+
