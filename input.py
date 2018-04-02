@@ -6,21 +6,28 @@ class Action(Enum):
     STAND = 1
 
 class Input:
-    playerName = ''
 
-    dealerSum = 0
-    playerSum = 0
-    possibleCards = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
-    disCards = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24] # 13 cards
-    action = Action.HIT
+    INITIAL_USED_CARDS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
+    # Considering 6 decks being used
+    INITIAL_POSSIBLE_CARDS = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24] # 13 cards
 
-    def __init__(self, table, playerName):
+    def __init__(self, playerName):
         self.playerName = playerName
+        self.dealerSum = 0
+        self.playerSum = 0
+        self.possibleCards = INITIAL_POSSIBLE_CARDS
+        self.usedCards = INITIAL_USED_CARDS
+
+    def cloneCards(self):
+        cloned = Input(self.playerName)
+        cloned.possibleCards = [x for x in self.possibleCards]
+        cloned.usedCards = [x for x in self.usedCards]
+
+    def applyTable(self, table):
         self.dealerSum = self.setDealerSum(table)
-        self.playerSum = self.setPlayerSum(table)
+        self.playerSum =self.setPlayerSum(table)
         self.possibleCards = self.setPossibleCards(table)
-        self.disCards = self.setDisCards(table)
-        self.action = Action.HIT
+        self.used = self.setUsedCards(table)
 
     def setDealerSum(self, table):
         dealer = table['dealer']
@@ -45,7 +52,7 @@ class Input:
                 index = card['number']
                 self.possibleCards[index] = max(self.possibleCards[index] - 1, 0)
 
-    def setDisCards(self, table):
+    def setUsedCards(self, table):
         dealer = table['dealer']
         dealerCards = utils.dealerCards(dealer)
         for card in dealerCards:

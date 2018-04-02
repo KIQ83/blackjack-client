@@ -2,11 +2,13 @@ from client import Player
 import time
 import random
 import utils
+from input import Input
+from input import Action
 
-def registerMyself(bot):
+def registerMyself(bot, playerName):
     print("--------------  NEW GAME --------------")
     print("Registering myself")
-    bot.register('KIQ')
+    bot.register(playerName)
 
 def awaitRegistering(bot):
     print("Waiting for everyone to register..")
@@ -41,15 +43,18 @@ def play(bot):
     player = utils.findPlayer(table['players'], bot.name)
     printMyCards(player['pile'])
     while (player['state'] == 'Playing'):
-        # tableAtualInput = input.fromTable()
-        # inputAtual = input.juntarInformacoes(tableAtual, acumulado)
+        inputAtual = acumulado.cloneCards()
+        inputAtual.applyTable(table)
+
         shouldStand = bool(random.getrandbits(1))
         if (shouldStand):
             print("I'll stand for now. Let's hope for the best")
             bot.stand()
+            inputAtual.action = Action.STAND
         else:
             print("HIT ME!")
             bot.hit()
+            inputAtual.action = Action.HIT
 
         # The game server is a little slow. Lets give him some time
         time.sleep(1)
@@ -72,8 +77,9 @@ def checkResult(bot):
     else:
         print("I lost.. I'll do better next time..")
 
-    # tableAtualInput = input.fromTable()
-    # inputAtual = input.juntarInformacoes(tableAtual, acumulado)
+    # This code is used only in order to send the newest information for acumulado later
+    inputAtual = acumulado.cloneCards()
+    inputAtual.applyTable(table)
 
 def leaveGame(bot):
     print("That's it. I'm out")
@@ -101,18 +107,21 @@ def printCards(cards):
 numberOfGames = 1
 bot = Player()
 
-# acumulado = Input(numeroDeDecks=6) // isso aqui inicializou todas as variaveis, menos a de decisao
+playerName = 'KIQ'
+inputAcumulado = Input(playerName)
 
 for x in range(0, numberOfGames):
-    # inputAtual = acumulado
-    registerMyself(bot)
+    inputAtual = inputAcumulado.cloneCards()
+
+    registerMyself(bot, playerName)
     awaitRegistering(bot)
     awaitForTurn(bot)
     play(bot)
     awaitGameFinish(bot)
     checkResult(bot)
     leaveGame(bot)
-    # acumulado = inputAtual
+    
+    inputAcumulado = inputAtual.cloneCards()
 
 
 
