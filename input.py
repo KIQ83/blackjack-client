@@ -52,5 +52,5 @@ def setCardsCount(input, table):
     # for _ in range(0, 13):
     #     input.append(24)
 
-def getAction(input, table, hit = False):
+def setAction(input, table, hit = False):
     return input.append(hit)
