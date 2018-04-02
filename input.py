@@ -1,56 +1,69 @@
 import utils
+from enum import Enum
 
-def parse(table, playerName):
-    print(table)
-    type = table['type']
-    if (type == 'Table'):
-       return toArray(table, playerName) 
-    return []
+class Action(Enum):
+    HIT = 0
+    STAND = 1
 
-def toArray(table, playerName):
-    input = []
-    input = setSums(input, table, playerName)
-    input = setCardsCount(input, table)
-    return input
-    
+class Input:
+    playerName = ''
 
-def setSums(input, table, playerName):
-    # dealer
-    dealer = table['dealer']
-    dealerCards = utils.dealerCards(dealer)
-    dealerSum = utils.sumCards(dealerCards)
-    input.append(dealerSum)
+    dealerSum = 0
+    playerSum = 0
+    possibleCards = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
+    disCards = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24] # 13 cards
+    action = Action.HIT
 
-    # player sum
-    player = utils.findPlayer(table['players'], playerName)
-    playerSum = utils.sumCards(player['pile'])
-    input.append(playerSum)
+    def __init__(self, table, playerName):
+        self.playerName = playerName
+        self.dealerSum = self.setDealerSum(table)
+        self.playerSum = self.setPlayerSum(table)
+        self.possibleCards = self.setPossibleCards(table)
+        self.disCards = self.setDisCards(table)
+        self.action = Action.HIT
 
-    return input
+    def setDealerSum(self, table):
+        dealer = table['dealer']
+        dealerCards = utils.dealerCards(dealer)
+        return utils.sumCards(dealerCards)
 
-def setCardsCount(input, table):
-    # ongame
-    ongame = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
+    def setPlayerSum(self, table):
+        player = utils.findPlayer(table['players'], self.playerName)
+        return utils.sumCards(player['pile'])
 
-    dealer = table['dealer']
-    dealerCards = utils.dealerCards(dealer)
-    for card in dealerCards:
-        index = card['number']
-        ongame[index] = ongame[index] + 1
-    
-    players = table['players']
-    for player in players:
-        playerCards = player['pile']
-        for card in playerCards:
+    def setPossibleCards(self, table):
+        dealer = table['dealer']
+        dealerCards = utils.dealerCards(dealer)
+        for card in dealerCards:
             index = card['number']
-            ongame[index] = ongame[index] + 1
+            self.possibleCards[index] = max(self.possibleCards[index] - 1, 0)
+        
+        players = table['players']
+        for player in players:
+            playerCards = player['pile']
+            for card in playerCards:
+                index = card['number']
+                self.possibleCards[index] = max(self.possibleCards[index] - 1, 0)
 
-    return input + ongame
+    def setDisCards(self, table):
+        dealer = table['dealer']
+        dealerCards = utils.dealerCards(dealer)
+        for card in dealerCards:
+            index = card['number']
+            self.disCards[index] = self.disCards[index] + 1
 
-    # # on game
-    # ongame = []
-    # for _ in range(0, 13):
-    #     input.append(24)
+        players = table['players']
+        for player in players:
+            playerCards = player['pile']
+            for card in playerCards:
+                index = card['number']
+                self.disCards[index] = self.disCards[index] + 1
 
-def setAction(input, table, hit = False):
-    return input.append(hit)
+    def format(self):
+        input = []
+        input.append(self.dealerSum)
+        input.append(self.playerSum)
+        input = input + self.possibleCards
+        input = input + self.disCards
+        input.append(self.action)
+        print(input)
