@@ -41,6 +41,8 @@ def play(bot):
     player = utils.findPlayer(table['players'], bot.name)
     printMyCards(player['pile'])
     while (player['state'] == 'Playing'):
+        # tableAtualInput = input.fromTable()
+        # inputAtual = input.juntarInformacoes(tableAtual, acumulado)
         shouldStand = bool(random.getrandbits(1))
         if (shouldStand):
             print("I'll stand for now. Let's hope for the best")
@@ -70,6 +72,9 @@ def checkResult(bot):
     else:
         print("I lost.. I'll do better next time..")
 
+    # tableAtualInput = input.fromTable()
+    # inputAtual = input.juntarInformacoes(tableAtual, acumulado)
+
 def leaveGame(bot):
     print("That's it. I'm out")
     bot.close()
@@ -96,7 +101,10 @@ def printCards(cards):
 numberOfGames = 1
 bot = Player()
 
+# acumulado = Input(numeroDeDecks=6) // isso aqui inicializou todas as variaveis, menos a de decisao
+
 for x in range(0, numberOfGames):
+    # inputAtual = acumulado
     registerMyself(bot)
     awaitRegistering(bot)
     awaitForTurn(bot)
@@ -104,6 +112,7 @@ for x in range(0, numberOfGames):
     awaitGameFinish(bot)
     checkResult(bot)
     leaveGame(bot)
+    # acumulado = inputAtual
 
 
 
