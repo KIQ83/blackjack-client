@@ -1,6 +1,7 @@
 from client import Player
 import time
 import random
+import utils
 
 def registerMyself(bot):
     print("--------------  NEW GAME --------------")
@@ -35,9 +36,9 @@ def awaitGameFinish(bot):
 
 def play(bot):
     print("Heart of the cards, don't disappoint me!")
-    table = bot.tableState()
+    table = bot.tableState(True)
     printDealerShownCard(table['dealer'])
-    player = findPlayer(table['players'], bot.name)
+    player = utils.findPlayer(table['players'], bot.name)
     printMyCards(player['pile'])
     while (player['state'] == 'Playing'):
         shouldStand = bool(random.getrandbits(1))
@@ -51,7 +52,7 @@ def play(bot):
         # The game server is a little slow. Lets give him some time
         time.sleep(1)
         table = bot.tableState()
-        player = findPlayer(table['players'], bot.name)
+        player = utils.findPlayer(table['players'], bot.name)
         printMyCards(player['pile'])
 
     print("Ok, that's it for me. I finish my play")
@@ -59,7 +60,7 @@ def play(bot):
 def checkResult(bot):
     print("Checking results")
     table = bot.tableState()
-    player = findPlayer(table['players'], bot.name)
+    player = utils.findPlayer(table['players'], bot.name)
     dealer = table['dealer']
     printFullDealer(dealer)
     printMyCards(player['pile'])
@@ -73,17 +74,12 @@ def leaveGame(bot):
     print("That's it. I'm out")
     bot.close()
 
-def findPlayer(playersList, playerName):
-    for player in playersList:
-        if player['name'] == playerName:
-            return player
-
 def printMyCards(cards):
     print("These are my cards:")
     printCards(cards)
 
 def printDealerShownCard(dealer):
-    print('Dealer has: ' + cardDisplay(dealer['shown']))
+    print('Dealer has: ' + utils.cardDisplay(dealer['shown']))
 
 def printFullDealer(dealer):
     dealerCards = [dealer['shown'], dealer['hidden']]
@@ -91,51 +87,13 @@ def printFullDealer(dealer):
     printCards(dealerCards)
 
 def printCards(cards):
-    cardSum = sumCards(cards)
+    cardSum = utils.sumCards(cards)
     cardsDisplay = ''
     for card in cards:
-        cardsDisplay += cardDisplay(card) + ","
+        cardsDisplay += utils.cardDisplay(card) + ","
     print(cardsDisplay + " that gives a total of " + str(cardSum))
 
-
-def cardDisplay(card):
-    return str(getCardSymbol(card['number'])) + card['suit'] 
-
-def getCardSymbol(cardIndex):
-    if cardIndex == 0:
-        return 'A'
-    elif cardIndex == 10:
-        return 'J'
-    elif cardIndex == 11:
-        return 'Q'
-    elif cardIndex == 12:
-        return 'K'
-    else:
-        return str(cardIndex + 1)
-
-def getCardSumValue(cardIndex):
-    # figure Cards are worth 10
-    if cardIndex in (10, 13):
-        return 10
-    else:
-        return cardIndex + 1
-
-def sumCards(cards):
-    cardValues = [getCardSumValue(card['number']) for card in cards]
-    simpleSum = sum(cardValues)
-    hasAce = containsAce([card['number'] for card in cards])
-    # will use ace as 11 only if has ace and if sum does not exceed 21
-    usableAce = hasAce and (simpleSum + 10) <= 21
-    if usableAce:
-        return simpleSum + 10
-    else:
-        return simpleSum
-
-    
-def containsAce(cardsIndexes):
-    return 0 in cardsIndexes
-
-numberOfGames = 2
+numberOfGames = 1
 bot = Player()
 
 for x in range(0, numberOfGames):

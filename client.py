@@ -3,6 +3,7 @@ import formatter
 import json
 import struct
 import time
+import input as Input
 
 HOST = '127.0.0.1'
 PORT = 3000
@@ -122,9 +123,12 @@ class Player:
 		self.client.send(formatter.formatStand())
 		return self.client.recv()
 	
-	def tableState(self):
+	def tableState(self, input = False):
 		self._ensureConnection()
 		self.client.recv()
+		table = self.client.table
+		if (input):
+			print(Input.parse(table, self.name))
 		return self.client.table
 
 	def close(self):
