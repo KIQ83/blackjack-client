@@ -115,7 +115,7 @@ class Bot(object):
         self.bot.close()
 
     def start(self):
-        for x in range(0, self.numberOfGames):
+        for _ in range(0, self.numberOfGames):
             self.registerMyself()
             self.awaitRegistering()
             self.awaitForTurn()

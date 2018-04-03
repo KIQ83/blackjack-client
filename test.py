@@ -1,4 +1,6 @@
+import random
 from bot import Bot
 
-x = Bot(100)
+name = 'Jogador' + str(random.randint(1, 10000000))
+x = Bot(100, 'Player ' + name)
 x.start()

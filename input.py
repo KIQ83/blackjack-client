@@ -1,4 +1,5 @@
 import utils
+import csv
 from enum import Enum
 
 INITIAL_USED_CARDS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
@@ -89,3 +90,16 @@ class Input:
         input = input + self.tableState.possibleCards
         input.append(self.action.value)
         print(input)
+        self.writeCSV(input)
+
+    def writeCSV(self, input):
+        with open('inputs.csv', 'a', newline='') as csvfile:
+            fieldnames = ['Dealers Current Sum', 'MySum', 'UA', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8', 'U9', 'U10', 'UJ', 'UQ', 'UK', 'PA', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'PJ', 'PQ', 'PK', 'Action']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            row = {}
+            for (index, field) in enumerate(fieldnames):
+                feature = { field: input[index] }
+                row.update(feature)
+            
+            writer.writerow(row)
+
