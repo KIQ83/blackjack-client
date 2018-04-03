@@ -1,6 +1,6 @@
 def getCardSumValue(cardIndex):
     # figure Cards are worth 10
-    if cardIndex in (10, 13):
+    if cardIndex in range(10, 13):
         return 10
     else:
         return cardIndex + 1
