@@ -44,3 +44,22 @@ def dealerCards(dealer):
     if ('hidden' in dealer):
         dealerCards.append(dealer['hidden'])
     return dealerCards
+
+def printMyCards(cards):
+    print("These are my cards:")
+    printCards(cards)
+
+def printDealerShownCard(dealer):
+    print('Dealer has: ' + cardDisplay(dealer['shown']))
+
+def printFullDealer(dealer):
+    dealerCards = [dealer['shown'], dealer['hidden']]
+    print('Dealer cards: ')
+    printCards(dealerCards)
+
+def printCards(cards):
+    cardSum = sumCards(cards)
+    cardsDisplay = ''
+    for card in cards:
+        cardsDisplay += cardDisplay(card) + ","
+    print(cardsDisplay + " that gives a total of " + str(cardSum))

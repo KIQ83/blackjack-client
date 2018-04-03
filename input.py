@@ -1,76 +1,91 @@
 import utils
 from enum import Enum
 
+INITIAL_USED_CARDS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
+# Considering 6 decks being used
+INITIAL_POSSIBLE_CARDS = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24] # 13 cards
+
 class Action(Enum):
     HIT = 0
     STAND = 1
 
-class Input:
+class TableState:
 
-    INITIAL_USED_CARDS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # 13 cards
-    # Considering 6 decks being used
-    INITIAL_POSSIBLE_CARDS = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24] # 13 cards
-
-    def __init__(self, playerName):
-        self.playerName = playerName
-        self.dealerSum = 0
-        self.playerSum = 0
+    def __init__(self):
         self.possibleCards = INITIAL_POSSIBLE_CARDS
         self.usedCards = INITIAL_USED_CARDS
 
-    def cloneCards(self):
-        cloned = Input(self.playerName)
+    def clone(self):
+        cloned = TableState()
         cloned.possibleCards = [x for x in self.possibleCards]
         cloned.usedCards = [x for x in self.usedCards]
+        return cloned
 
     def applyTable(self, table):
-        self.dealerSum = self.setDealerSum(table)
-        self.playerSum =self.setPlayerSum(table)
-        self.possibleCards = self.setPossibleCards(table)
-        self.used = self.setUsedCards(table)
-
-    def setDealerSum(self, table):
-        dealer = table['dealer']
-        dealerCards = utils.dealerCards(dealer)
-        return utils.sumCards(dealerCards)
-
-    def setPlayerSum(self, table):
-        player = utils.findPlayer(table['players'], self.playerName)
-        return utils.sumCards(player['pile'])
+        self.setPossibleCards(table)
+        self.setUsedCards(table)
 
     def setPossibleCards(self, table):
         dealer = table['dealer']
         dealerCards = utils.dealerCards(dealer)
         for card in dealerCards:
             index = card['number']
-            self.possibleCards[index] = max(self.possibleCards[index] - 1, 0)
+            self.possibleCards[index] = self.possibleCards[index] - 1
         
         players = table['players']
         for player in players:
             playerCards = player['pile']
             for card in playerCards:
                 index = card['number']
-                self.possibleCards[index] = max(self.possibleCards[index] - 1, 0)
+                self.possibleCards[index] = self.possibleCards[index] - 1
 
     def setUsedCards(self, table):
         dealer = table['dealer']
         dealerCards = utils.dealerCards(dealer)
         for card in dealerCards:
             index = card['number']
-            self.disCards[index] = self.disCards[index] + 1
+            self.usedCards[index] = self.usedCards[index] + 1
 
         players = table['players']
         for player in players:
             playerCards = player['pile']
             for card in playerCards:
                 index = card['number']
-                self.disCards[index] = self.disCards[index] + 1
+                self.usedCards[index] = self.usedCards[index] + 1
+
+class Input:
+
+    def __init__(self, playerName, tableState):
+        self.playerName = playerName
+        self.dealerSum = 0
+        self.playerSum = 0
+        self.tableState = tableState
+
+    def applyTable(self, table):
+        self.setDealerSum(table)
+        self.setPlayerSum(table)
+        self.tableState.applyTable(table)
+
+    def setDealerSum(self, table):
+        dealer = table['dealer']
+        dealerCards = utils.dealerCards(dealer)
+        self.dealerSum = utils.sumCards(dealerCards)
+
+    def setPlayerSum(self, table):
+        player = utils.findPlayer(table['players'], self.playerName)
+        self.playerSum = utils.sumCards(player['pile'])
+
+    def invertAction(self):
+        if (self.action == Action.HIT):
+            self.action = Action.STAND
+        else:
+            self.action = Action.HIT
 
     def format(self):
         input = []
         input.append(self.dealerSum)
         input.append(self.playerSum)
-        input = input + self.possibleCards
-        input = input + self.disCards
-        input.append(self.action)
+        input = input + self.tableState.usedCards        
+        input = input + self.tableState.possibleCards
+        input.append(self.action.value)
         print(input)

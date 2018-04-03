@@ -3,7 +3,6 @@ import formatter
 import json
 import struct
 import time
-from input import Input
 
 HOST = '127.0.0.1'
 PORT = 3000
@@ -11,7 +10,6 @@ MSGLEN = 2048
 
 class Client(object):
 	socket = None
-
 	table = None
 
 	def __del__(self):
@@ -123,12 +121,9 @@ class Player:
 		self.client.send(formatter.formatStand())
 		return self.client.recv()
 	
-	def tableState(self, input = False):
+	def tableState(self):
 		self._ensureConnection()
 		self.client.recv()
-		if (input):
-			aux = Input(self.client.table, self.name)
-			aux.format()
 		return self.client.table
 
 	def close(self):
