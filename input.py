@@ -13,8 +13,8 @@ class Action(Enum):
 class TableState:
 
     def __init__(self):
-        self.possibleCards = INITIAL_POSSIBLE_CARDS
-        self.usedCards = INITIAL_USED_CARDS
+        self.possibleCards = [x for x in INITIAL_POSSIBLE_CARDS]
+        self.usedCards = [x for x in INITIAL_USED_CARDS]
 
     def clone(self):
         cloned = TableState()

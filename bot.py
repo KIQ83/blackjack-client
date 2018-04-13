@@ -16,11 +16,12 @@ class Bot(object):
     # inputs used on the current game
     gameInputs = []
 
-    def __init__(self, numberOfGames, playerName = 'MDNS_BOT'):
+    currentDealerId = None
+
+    def __init__(self, numberOfGames, playerName = 'SUPER_BOT'):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        self.cumulateTableState = TableState()
 
     def registerMyself(self):
         print("--------------  NEW GAME --------------")
@@ -63,7 +64,10 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
+            # This is where we will use our deep learning model
             shouldStand = bool(random.getrandbits(1))
+
+            # playing agains the decided action
             if (shouldStand):
                 print("I'll stand for now. Let's hope for the best")
                 self.bot.stand()
@@ -114,12 +118,24 @@ class Bot(object):
         print("That's it. I'm out")
         self.bot.close()
 
+    # we want to check if there is a new dealer, with new cards
+    def assertTable(self):
+        table = self.bot.tableState()
+        if (self.currentDealerId == None or self.currentDealerId != table['dealer']['id']):
+            print("New Dealer!! Welcome to the table my friend!")
+            # new Dealer! Will reset cards counting
+            self.cumulateTableState = TableState()
+            self.currentDealerId = table['dealer']['id']
+
     def start(self):
         for _ in range(0, self.numberOfGames):
             self.registerMyself()
             self.awaitRegistering()
             self.awaitForTurn()
+
+            self.assertTable()
             self.play()
+            
             self.awaitGameFinish()
             self.processResult()
             self.prepareForNextGame()
