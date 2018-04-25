@@ -64,18 +64,15 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
-            # This is where we will use our deep learning model
-            shouldStand = bool(random.getrandbits(1))
-
             # playing agains the decided action
-            if (shouldStand):
-                print("I'll stand for now. Let's hope for the best")
-                self.bot.stand()
-                currentInput.action = Action.STAND
-            else:
+            if (shouldHit(random.getrandbits(1))):
                 print("HIT ME!")
                 self.bot.hit()
                 currentInput.action = Action.HIT
+            else:
+                print("I'll stand for now. Let's hope for the best")
+                self.bot.stand()
+                currentInput.action = Action.STAND
 
             # The game server is a little slow. Lets give him some time
             self.gameInputs.append(currentInput)
@@ -85,6 +82,9 @@ class Bot(object):
             utils.printMyCards(player['pile'])
 
         print("Ok, that's it for me. I finish my play")
+
+    def shouldHit(self, hitProbability):
+        return hitProbability > 0.5
 
     def processResult(self):
         print("Checking results")
