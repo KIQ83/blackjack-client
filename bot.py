@@ -99,15 +99,34 @@ class Bot(object):
         else:
             print("I lost.. I'll do better next time..")
 
-        self.handleInputs(isWinner)
+        self.handleInputs(isWinner, player, dealer)
 
-    def handleInputs(self, isWinner):
+    def handleInputs(self, isWinner, player, dealer):
         lastGameInput = self.gameInputs[-1]
+        result = 'WIN'
         if (not isWinner):
             lastGameInput.invertAction()
+            result = 'LOSS'
 
         for gameInput in self.gameInputs:
             gameInput.format()
+
+        dealerCards = []
+        dealerCards.append(dealer['shown'])
+        dealerCards.append(dealer['hidden'])
+        dealerSum = utils.sumCards(dealerCards)
+        playerSum = utils.sumCards(player['pile'])
+        self.saveWinRate(dealerSum, playerSum, dealer, result)
+
+
+    def saveWinRate(self, dealerSum, playerSum, dealer, result):
+        # keeping track of win rates
+        f = open('win_rates.csv','a')
+        input = [dealer['id'], dealerSum, playerSum, result]
+        print(str(input))
+        f.write(str(dealer['id']) + "," + str(dealerSum) + ',' + str(playerSum) + "," + result + '\n')
+        f.close()
+         
 
     def prepareForNextGame(self):
         table = self.bot.tableState()
