@@ -5,6 +5,7 @@ import utils
 from input import Input
 from input import Action
 from input import TableState
+from learning_model import learning_model
 
 class Bot(object):
 
@@ -22,6 +23,7 @@ class Bot(object):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
+        self.learning_model = learning_model()
 
     def registerMyself(self):
         print("--------------  NEW GAME --------------")
@@ -64,18 +66,17 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
-            # This is where we will use our deep learning model
-            shouldStand = bool(random.getrandbits(1))
+            shouldHit = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum)
 
             # playing agains the decided action
-            if (shouldStand):
-                print("I'll stand for now. Let's hope for the best")
-                self.bot.stand()
-                currentInput.action = Action.STAND
-            else:
+            if (not shouldHit):
                 print("HIT ME!")
                 self.bot.hit()
                 currentInput.action = Action.HIT
+            else:
+                print("I'll stand for now. Let's hope for the best")
+                self.bot.stand()
+                currentInput.action = Action.STAND
 
             # The game server is a little slow. Lets give him some time
             self.gameInputs.append(currentInput)
@@ -83,6 +84,11 @@ class Bot(object):
             table = self.bot.tableState()
             player = utils.findPlayer(table['players'], self.bot.name)
             utils.printMyCards(player['pile'])
+
+            # this means the player hit, and is not busted
+            if (player['state'] == 'Playing'):
+                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, shouldHit, False, None)
+
 
         print("Ok, that's it for me. I finish my play")
 
@@ -117,6 +123,8 @@ class Bot(object):
         dealerSum = utils.sumCards(dealerCards)
         playerSum = utils.sumCards(player['pile'])
         self.saveWinRate(dealerSum, playerSum, dealer, result)
+
+        self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.action.value, True, isWinner)
 
 
     def saveWinRate(self, dealerSum, playerSum, dealer, result):
