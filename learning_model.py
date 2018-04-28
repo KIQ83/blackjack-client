@@ -59,12 +59,12 @@ class learning_model():
 			if (isWinner):
 				reward = REWARD_WIN
 			else:
-				diff = 1
-				if (finalPlayerSum > 21):
-					diff = finalPlayerSum - 21
-				else:
-					diff = finalDealerSum - finalPlayerSum
-				reward = REWARD_LOSS*diff
+				# diff = 1
+				# if (finalPlayerSum > 21):
+				# 	diff = finalPlayerSum - 21
+				# else:
+				# 	diff = finalDealerSum - finalPlayerSum
+				# reward = REWARD_LOSS*diff
 				reward = REWARD_LOSS
 		else:
 			reward = REWARD_OK
