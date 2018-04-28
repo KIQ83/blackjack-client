@@ -12,6 +12,8 @@ class agent():
 		self.output = tf.reshape(output, [-1])
 
 		self.chosen_action = tf.argmax(self.output, 0)
+		# self.temp = tf.placeholder(shape=[],dtype=tf.float32)
+		# self.Q_dist = slim.softmax(self.output/self.temp)
  
 		#The next six lines establish the training proceedure. We feed the reward and chosen action into the network
 		#to compute the loss, and use it to update the network.

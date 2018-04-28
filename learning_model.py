@@ -7,9 +7,9 @@ from agent import agent
 N_STATES = 170
 N_ACTIONS = 2
 
-REWARD_LOSS = -1
-REWARD_OK = 2
-REWARD_WIN = 2
+REWARD_LOSS = -20
+REWARD_OK = 5
+REWARD_WIN = 15
 
 class learning_model():
 
@@ -31,15 +31,20 @@ class learning_model():
 		except:
 			print('not restored')
 			self.sess = tf.Session()
+			self.sess.run(tf.initialize_all_variables())
 
-		self.sess.run(tf.initialize_all_variables())
 		self.save()
 
 
 	def decide(self, playerSum, dealerSum):
 		s = [playerSum, dealerSum]
 
-		#Choose either a random action or one from our network.
+		# t = 0.5
+		# Q_probs = self.sess.run(self.myAgent.Q_dist, feed_dict={self.myAgent.state_in:s, self.myAgent.temp:t})
+		# action_value = np.random.choice(Q_probs[0], p=Q_probs[0])
+		# return np.argmax(Q_probs[0] == action_value)
+
+		# Choose either a random action or one from our network.
 		if np.random.rand(1) < self.e:
 			action = np.random.randint(N_ACTIONS)
 		else:
@@ -60,6 +65,7 @@ class learning_model():
 				else:
 					diff = finalDealerSum - finalPlayerSum
 				reward = REWARD_LOSS*diff
+				reward = REWARD_LOSS
 		else:
 			reward = REWARD_OK
 
