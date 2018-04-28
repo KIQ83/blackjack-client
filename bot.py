@@ -23,7 +23,7 @@ class Bot(object):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        self.learning_model = learning_model()
+        self.learning_model = learning_model('/tmp/bot.ckpt')
 
     def registerMyself(self):
         print("--------------  NEW GAME --------------")
@@ -34,7 +34,7 @@ class Bot(object):
         print("Waiting for everyone to register..")
         table = self.bot.tableState()
         while (table == None or table['state'] == 'Registering'):
-            time.sleep(1)
+            time.sleep(0.05)
             print("Still waiting")
             table = self.bot.tableState()
 
@@ -43,7 +43,7 @@ class Bot(object):
         table = self.bot.tableState()
         while (table['currentPlayer'] != self.bot.name):
             print("Not my turn. It's " + str(table['currentPlayer']) + "'s turn now.")
-            time.sleep(1)
+            time.sleep(0.05)
             table = self.bot.tableState()
 
         print("My turn now. Time to shine")
@@ -52,7 +52,7 @@ class Bot(object):
         print("Waiting for game to Finish")
         table = self.bot.tableState()
         while (table['state'] != 'Finished'):
-            time.sleep(1)
+            time.sleep(0.05)
             print("Still waiting")
             table = self.bot.tableState()
 
@@ -80,7 +80,7 @@ class Bot(object):
 
             # The game server is a little slow. Lets give him some time
             self.gameInputs.append(currentInput)
-            time.sleep(1)
+            time.sleep(0.05)
             table = self.bot.tableState()
             player = utils.findPlayer(table['players'], self.bot.name)
             utils.printMyCards(player['pile'])

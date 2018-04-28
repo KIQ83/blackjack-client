@@ -7,13 +7,15 @@ from agent import agent
 N_STATES = 170
 N_ACTIONS = 2
 
-REWARD_LOSS = -20
+REWARD_LOSS = -200
 REWARD_OK = 5
 REWARD_WIN = 15
 
 class learning_model():
 
-	def __init__(self):
+	def __init__(self, modelfile="/tmp/model.ckpt"):
+		self.modelfile = modelfile
+
 		tf.reset_default_graph() #Clear the Tensorflow graph.
 
 		self.myAgent = agent(lr=0.01, s_size=N_STATES, a_size=N_ACTIONS) #Load the agent.
@@ -21,8 +23,17 @@ class learning_model():
 
 		self.e = 0.1 #Set the chance of taking a random action.
 
+		self.saver = tf.train.Saver()
 		self.sess = tf.Session()
+		try: 
+			self.restore()
+			print('#### restored')
+		except:
+			print('not restored')
+			self.sess = tf.Session()
+
 		self.sess.run(tf.initialize_all_variables())
+		self.save()
 
 
 	def decide(self, playerSum, dealerSum):
@@ -50,3 +61,11 @@ class learning_model():
 		#Update the network.
 		feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
 		_,ww = self.sess.run([self.myAgent.update, self.weights], feed_dict=feed_dict)
+
+		self.save()
+
+	def save(self):
+		self.saver.save(self.sess, self.modelfile)
+	
+	def restore(self):
+		self.saver.restore(self.sess, self.modelfile)
