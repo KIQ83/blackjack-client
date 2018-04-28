@@ -8,6 +8,9 @@ class agent():
 		#These lines established the feed-forward part of the network. The agent takes a state and produces an action.
 		self.state_in = tf.placeholder(shape=(2,), dtype=tf.int32)
 		state_in_OH = slim.one_hot_encoding(self.state_in, s_size)
+
+		#hidden = slim.fully_connected(state_in_OH, 6, biases_initializer=None,activation_fn=tf.nn.relu, weights_initializer=tf.ones_initializer())
+		#hidden2 = slim.fully_connected(hidden, 15, biases_initializer=None,activation_fn=tf.nn.relu, weights_initializer=tf.ones_initializer())
 		output = slim.fully_connected(state_in_OH, a_size, biases_initializer=None, activation_fn=tf.nn.sigmoid, weights_initializer=tf.ones_initializer())
 		self.output = tf.reshape(output, [-1])
 

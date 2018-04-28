@@ -19,11 +19,13 @@ class Bot(object):
 
     currentDealerId = None
 
-    def __init__(self, numberOfGames, playerName = 'SUPER_BOT'):
+    def __init__(self, numberOfGames, playerName='SUPER_BOT', modelname='default'):
+        self.modelname = modelname
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        self.learning_model = learning_model('/tmp/bot2.ckpt')
+
+        self.learning_model = learning_model('./models/'+modelname+'/'+modelname+'.ckpt')
 
     def registerMyself(self):
         print("--------------  NEW GAME --------------")
@@ -129,7 +131,7 @@ class Bot(object):
 
     def saveWinRate(self, dealerSum, playerSum, dealer, result):
         # keeping track of win rates
-        f = open('win_rates.csv','a')
+        f = open('./models/'+self.modelname+'/win_rates_'+self.modelname+'.csv','a')
         input = [dealer['id'], dealerSum, playerSum, result]
         print(str(input))
         f.write(str(dealer['id']) + "," + str(dealerSum) + ',' + str(playerSum) + "," + result + '\n')
