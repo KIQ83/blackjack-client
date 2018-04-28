@@ -34,7 +34,7 @@ class Bot(object):
         print("Waiting for everyone to register..")
         table = self.bot.tableState()
         while (table == None or table['state'] == 'Registering'):
-            time.sleep(0.05)
+            time.sleep(0.1)
             print("Still waiting")
             table = self.bot.tableState()
 
@@ -43,7 +43,7 @@ class Bot(object):
         table = self.bot.tableState()
         while (table['currentPlayer'] != self.bot.name):
             print("Not my turn. It's " + str(table['currentPlayer']) + "'s turn now.")
-            time.sleep(0.05)
+            time.sleep(0.1)
             table = self.bot.tableState()
 
         print("My turn now. Time to shine")
@@ -52,7 +52,7 @@ class Bot(object):
         print("Waiting for game to Finish")
         table = self.bot.tableState()
         while (table['state'] != 'Finished'):
-            time.sleep(0.05)
+            time.sleep(0.1)
             print("Still waiting")
             table = self.bot.tableState()
 
@@ -80,14 +80,14 @@ class Bot(object):
 
             # The game server is a little slow. Lets give him some time
             self.gameInputs.append(currentInput)
-            time.sleep(0.05)
+            time.sleep(0.1)
             table = self.bot.tableState()
             player = utils.findPlayer(table['players'], self.bot.name)
             utils.printMyCards(player['pile'])
 
             # this means the player hit, and is not busted
             if (player['state'] == 'Playing'):
-                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, shouldHit, False, None)
+                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, 0, 0, shouldHit, False, None)
 
 
         print("Ok, that's it for me. I finish my play")
@@ -124,7 +124,7 @@ class Bot(object):
         playerSum = utils.sumCards(player['pile'])
         self.saveWinRate(dealerSum, playerSum, dealer, result)
 
-        self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.action.value, True, isWinner)
+        self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
 
 
     def saveWinRate(self, dealerSum, playerSum, dealer, result):

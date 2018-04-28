@@ -7,9 +7,9 @@ from agent import agent
 N_STATES = 170
 N_ACTIONS = 2
 
-REWARD_LOSS = -200
-REWARD_OK = 5
-REWARD_WIN = 15
+REWARD_LOSS = -1
+REWARD_OK = 2
+REWARD_WIN = 2
 
 class learning_model():
 
@@ -18,7 +18,7 @@ class learning_model():
 
 		tf.reset_default_graph() #Clear the Tensorflow graph.
 
-		self.myAgent = agent(lr=0.01, s_size=N_STATES, a_size=N_ACTIONS) #Load the agent.
+		self.myAgent = agent(lr=0.001, s_size=N_STATES, a_size=N_ACTIONS) #Load the agent.
 		self.weights = tf.trainable_variables()[0] #The weights we will evaluate to look into the network.
 
 		self.e = 0.1 #Set the chance of taking a random action.
@@ -47,14 +47,19 @@ class learning_model():
 
 		return action
 
-	def feed_reward(self, playerSum, dealerSum, action, gameEnded, isWinner):
+	def feed_reward(self, playerSum, dealerSum, finalPlayerSum, finalDealerSum, action, gameEnded, isWinner):
 		s = [playerSum, dealerSum]
 
 		if (gameEnded):
 			if (isWinner):
 				reward = REWARD_WIN
 			else:
-				reward = REWARD_LOSS
+				diff = 1
+				if (finalPlayerSum > 21):
+					diff = finalPlayerSum - 21
+				else:
+					diff = finalDealerSum - finalPlayerSum
+				reward = REWARD_LOSS*diff
 		else:
 			reward = REWARD_OK
 

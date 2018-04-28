@@ -4,7 +4,7 @@ import numpy as np
 
 class agent():
 
-	def __init__(self, lr=0.01, s_size=170, a_size=2):
+	def __init__(self, lr=0.001, s_size=170, a_size=2):
 		#These lines established the feed-forward part of the network. The agent takes a state and produces an action.
 		self.state_in = tf.placeholder(shape=(2,), dtype=tf.int32)
 		state_in_OH = slim.one_hot_encoding(self.state_in, s_size)
