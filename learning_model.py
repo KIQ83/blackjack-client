@@ -10,7 +10,7 @@ N_ACTIONS = 2
 REWARD_LOSS = -20
 REWARD_OK = 5
 REWARD_WIN = 15
-E = 0.1
+E = 0.2
 
 class learning_model():
 

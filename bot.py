@@ -7,7 +7,7 @@ from input import Action
 from input import TableState
 from learning_model import learning_model
 
-sleepTime=0.05
+sleepTime=0.1
 
 class Bot(object):
 
