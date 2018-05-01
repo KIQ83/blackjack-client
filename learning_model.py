@@ -45,8 +45,10 @@ class learning_model():
 		# Choose either a random action or one from our network.
 		e = E
 		if np.random.rand(1) < e:
+			print('escolha random')
 			action = np.random.randint(N_ACTIONS)
 		else:
+			print('escolha treinada')
 			action = self.sess.run(self.myAgent.chosen_action,feed_dict={self.myAgent.state_in:s})
 
 		return action
