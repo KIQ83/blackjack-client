@@ -14,7 +14,9 @@ class agent():
 		output = slim.fully_connected(state_in_OH, a_size, biases_initializer=None, activation_fn=tf.nn.sigmoid, weights_initializer=tf.ones_initializer())
 		self.output = tf.reshape(output, [-1])
 
-		self.chosen_action = tf.argmax(self.output, 0)
+		argmax = tf.argmax(self.output, 0)
+		print("maior", argmax)
+		self.chosen_action = argmax
 		# self.temp = tf.placeholder(shape=[],dtype=tf.float32)
 		# self.Q_dist = slim.softmax(self.output/self.temp)
  

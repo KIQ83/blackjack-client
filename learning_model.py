@@ -1,13 +1,14 @@
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
+from math import log
 
 from agent import agent
 
 N_STATES = 170
-N_ACTIONS = 2
+N_ACTIONS = 1
 
-REWARD_LOSS = -20
+REWARD_LOSS = -2
 REWARD_OK = 5
 REWARD_WIN = 15
 E = 0.2
@@ -60,13 +61,15 @@ class learning_model():
 			if (isWinner):
 				reward = REWARD_WIN
 			else:
-				# diff = 1
-				# if (finalPlayerSum > 21):
-				# 	diff = finalPlayerSum - 21
-				# else:
-				# 	diff = finalDealerSum - finalPlayerSum
-				# reward = REWARD_LOSS*diff
-				reward = REWARD_LOSS
+				diff = 1
+				if (finalPlayerSum > 21):
+					diff = finalPlayerSum - 21
+				else:
+					diff = abs(finalDealerSum - finalPlayerSum) + 1
+				reward = log(diff, 10) * -30
+				print('perdeu por', diff)
+				print('reward', reward)
+				# reward = REWARD_LOSS
 		else:
 			reward = REWARD_OK
 
