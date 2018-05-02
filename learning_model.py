@@ -12,9 +12,9 @@ N_ACTIONS = 1
 # REWARD_OK = -500
 # REWARD_WIN = 1500
 
-REWARD_STAND = 2000
-REWARD_HIT = -2000
-REWARD_OK = -1000
+REWARD_STAND = 200
+REWARD_HIT = -200
+REWARD_OK = -100
 
 E = 0.2
 
@@ -56,7 +56,7 @@ class learning_model():
 		else:
 			print('escolha treinada')
 			chose = self.sess.run(self.myAgent.chosen_action,feed_dict={self.myAgent.state_in:s})
-			print('chose:', chose)
+			print('prob stand:', chose)
 			action = (not (not np.random.rand(1) < chose))
 
 		print(action)
@@ -78,14 +78,12 @@ class learning_model():
 				else: # hit
 					reward = REWARD_HIT
 			else:
-
-
 				diff = 1
 				if (finalPlayerSum > 21):
 					diff = finalPlayerSum - 21
 				else:
 					diff = abs(finalDealerSum - finalPlayerSum) + 1
-				reward = round(log(diff, 10) * 3000)
+				reward = round(log(diff, 10) * 300)
 
 				if (action): # stand
 					reward = -reward
@@ -94,7 +92,7 @@ class learning_model():
 				# reward = REWARD_LOSS
 		else:
 			if (not action): # hit
-				reward = REWARD_HIT
+				reward = REWARD_OK
 
 		#Update the network.
 		feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
