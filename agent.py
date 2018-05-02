@@ -15,8 +15,7 @@ class agent():
 		self.output = tf.reshape(output, [-1])
 
 		argmax = tf.argmax(self.output, 0)
-		print("maior", argmax)
-		self.chosen_action = argmax
+		self.chosen_action = self.output[argmax] # traz a prob de dar stand
 		# self.temp = tf.placeholder(shape=[],dtype=tf.float32)
 		# self.Q_dist = slim.softmax(self.output/self.temp)
  
@@ -25,6 +24,6 @@ class agent():
 		self.reward_holder = tf.placeholder(shape=[1], dtype=tf.float32)
 		self.action_holder = tf.placeholder(shape=[1], dtype=tf.int32)
 		self.responsible_weight = tf.slice(self.output, self.action_holder, [1])
-		self.loss = -(tf.log(self.responsible_weight) * self.reward_holder)
+		self.loss = -(tf.log(tf.clip_by_value(self.responsible_weight,1e-10,1.0)) * self.reward_holder) # clip_by_value = nao dar nan
 		optimizer = tf.train.GradientDescentOptimizer(learning_rate=lr)
 		self.update = optimizer.minimize(self.loss)

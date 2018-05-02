@@ -8,9 +8,14 @@ from agent import agent
 N_STATES = 170
 N_ACTIONS = 1
 
-REWARD_LOSS = -2
-REWARD_OK = 5
-REWARD_WIN = 15
+# REWARD_LOSS = -200
+# REWARD_OK = -500
+# REWARD_WIN = 1500
+
+REWARD_STAND = 2000
+REWARD_HIT = -2000
+REWARD_OK = -1000
+
 E = 0.2
 
 class learning_model():
@@ -50,32 +55,52 @@ class learning_model():
 			action = np.random.randint(N_ACTIONS)
 		else:
 			print('escolha treinada')
-			action = self.sess.run(self.myAgent.chosen_action,feed_dict={self.myAgent.state_in:s})
+			chose = self.sess.run(self.myAgent.chosen_action,feed_dict={self.myAgent.state_in:s})
+			print('chose:', chose)
+			action = (not (not np.random.rand(1) < chose))
 
+		print(action)
 		return action
 
 	def feed_reward(self, playerSum, dealerSum, finalPlayerSum, finalDealerSum, action, gameEnded, isWinner):
 		s = [playerSum, dealerSum]
 
+		print('---')
+		print('action:', action)
+		print('acabou:', gameEnded)
+		print('ganhou:', isWinner)
+		print('---')
+
 		if (gameEnded):
 			if (isWinner):
-				reward = REWARD_WIN
+				if (action): # stand
+					reward = REWARD_STAND
+				else: # hit
+					reward = REWARD_HIT
 			else:
+
+
 				diff = 1
 				if (finalPlayerSum > 21):
 					diff = finalPlayerSum - 21
 				else:
 					diff = abs(finalDealerSum - finalPlayerSum) + 1
-				reward = log(diff, 10) * -30
+				reward = round(log(diff, 10) * 3000)
+
+				if (action): # stand
+					reward = -reward
 				print('perdeu por', diff)
 				print('reward', reward)
 				# reward = REWARD_LOSS
 		else:
-			reward = REWARD_OK
+			if (not action): # hit
+				reward = REWARD_HIT
 
 		#Update the network.
 		feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
-		_,ww = self.sess.run([self.myAgent.update, self.weights], feed_dict=feed_dict)
+		_, ww = self.sess.run([self.myAgent.update, self.weights], feed_dict=feed_dict)
+
+		print(ww)
 
 		self.save()
 

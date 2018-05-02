@@ -115,7 +115,7 @@ class Bot(object):
         lastGameInput = self.gameInputs[-1]
         result = 'WIN'
         if (not isWinner):
-            lastGameInput.invertAction()
+            # lastGameInput.invertAction()
             result = 'LOSS'
 
         for gameInput in self.gameInputs:

@@ -1,0 +1,2 @@
+model_checkpoint_path: "bot6.ckpt"
+all_model_checkpoint_paths: "bot6.ckpt"
