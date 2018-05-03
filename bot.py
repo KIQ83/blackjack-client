@@ -70,10 +70,10 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
-            shouldHit = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum)
+            shouldStand = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum)
 
             # playing agains the decided action
-            if (not shouldHit):
+            if (not shouldStand):
                 print("HIT ME!")
                 self.bot.hit()
                 currentInput.action = Action.HIT
@@ -91,7 +91,7 @@ class Bot(object):
 
             # this means the player hit, and is not busted
             if (player['state'] == 'Playing'):
-                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, 0, 0, shouldHit, False, None)
+                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, 0, 0, shouldStand, False, None)
 
 
         print("Ok, that's it for me. I finish my play")
