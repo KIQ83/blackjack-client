@@ -16,7 +16,7 @@ REWARD_STAND = 200
 REWARD_HIT = -200
 REWARD_OK = -100
 
-E = 0.2
+E = 0.02
 
 class learning_model():
 
