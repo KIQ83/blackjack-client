@@ -70,7 +70,7 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
-            shouldHit = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum)
+            shouldHit = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards)
 
             # playing agains the decided action
             if (not shouldHit):
@@ -91,7 +91,7 @@ class Bot(object):
 
             # this means the player hit, and is not busted
             if (player['state'] == 'Playing'):
-                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, 0, 0, shouldHit, False, None)
+                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards, 0, 0, shouldHit, False, None)
 
 
         print("Ok, that's it for me. I finish my play")
@@ -128,7 +128,7 @@ class Bot(object):
         playerSum = utils.sumCards(player['pile'])
         self.saveWinRate(dealerSum, playerSum, dealer, result)
 
-        self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
+        self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.tableState.possibleCards, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
 
 
     def saveWinRate(self, dealerSum, playerSum, dealer, result):

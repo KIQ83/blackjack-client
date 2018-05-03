@@ -40,8 +40,10 @@ class learning_model():
 		self.save()
 
 
-	def decide(self, playerSum, dealerSum):
+	def decide(self, playerSum, dealerSum, cardProbabilities):
 		s = [playerSum, dealerSum]
+		for prob in cardProbabilities:
+			s.append(prob)
 
 		# t = 0.5
 		# Q_probs = self.sess.run(self.myAgent.Q_dist, feed_dict={self.myAgent.state_in:s, self.myAgent.temp:t})
@@ -62,8 +64,10 @@ class learning_model():
 		print(action)
 		return action
 
-	def feed_reward(self, playerSum, dealerSum, finalPlayerSum, finalDealerSum, action, gameEnded, isWinner):
+	def feed_reward(self, playerSum, dealerSum, cardProbabilities, finalPlayerSum, finalDealerSum, action, gameEnded, isWinner):
 		s = [playerSum, dealerSum]
+		for prob in cardProbabilities:
+			s.append(prob)
 
 		print('---')
 		print('action:', action)
