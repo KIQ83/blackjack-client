@@ -5,18 +5,14 @@ from math import log
 
 from agent import agent
 
-N_STATES = 170
-N_ACTIONS = 1
-
-# REWARD_LOSS = -200
-# REWARD_OK = -500
-# REWARD_WIN = 1500
+N_STATES = 15
+N_ACTIONS = 2
 
 REWARD_STAND = 200
 REWARD_HIT = -200
 REWARD_OK = -100
 
-E = 0.2
+E = 0.02
 
 class learning_model():
 
@@ -25,7 +21,7 @@ class learning_model():
 
 		tf.reset_default_graph() #Clear the Tensorflow graph.
 
-		self.myAgent = agent(lr=0.001, s_size=N_STATES, a_size=N_ACTIONS) #Load the agent.
+		self.myAgent = agent(lr=0.001, s_size=N_STATES) #Load the agent.
 		self.weights = tf.trainable_variables()[0] #The weights we will evaluate to look into the network.
 
 		self.saver = tf.train.Saver()
@@ -45,11 +41,6 @@ class learning_model():
 		for prob in cardProbabilities:
 			s.append(prob)
 
-		# t = 0.5
-		# Q_probs = self.sess.run(self.myAgent.Q_dist, feed_dict={self.myAgent.state_in:s, self.myAgent.temp:t})
-		# action_value = np.random.choice(Q_probs[0], p=Q_probs[0])
-		# return np.argmax(Q_probs[0] == action_value)
-
 		# Choose either a random action or one from our network.
 		e = E
 		if np.random.rand(1) < e:
@@ -57,7 +48,7 @@ class learning_model():
 			action = np.random.randint(N_ACTIONS)
 		else:
 			print('escolha treinada')
-			chose = self.sess.run(self.myAgent.chosen_action,feed_dict={self.myAgent.state_in:s})
+			chose = self.sess.run(self.myAgent.output,feed_dict={self.myAgent.input:[s]})
 			print('prob stand:', chose)
 			action = (not (not np.random.rand(1) < chose))
 
@@ -99,8 +90,9 @@ class learning_model():
 				reward = REWARD_OK
 
 		#Update the network.
-		feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
-		_, ww = self.sess.run([self.myAgent.update, self.weights], feed_dict=feed_dict)
+		#feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
+		feed_dict={self.myAgent.reward_holder:[reward], self.myAgent.input:[s]}
+		_, ww = self.sess.run([self.myAgent.train_op, self.weights], feed_dict=feed_dict)
 
 		print(ww)
 
