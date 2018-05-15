@@ -40,7 +40,7 @@ class RealTimeAnalytics():
 		self.fig.canvas.flush_events()
 		plt.pause(0.5)
 
-GET_GAMES = 25000
+GET_GAMES = 2000
 
 class CSVAnalytics():
 	def __init__(self, bot):
@@ -60,28 +60,32 @@ class CSVAnalytics():
 		sumTotal = 1
 		sumWins = 0
 		winsRate = []
-		dealers = []
-		countDealers = 0
+		yGames = []
+		countGames = 0
 		currentDealerID = 0
-		for index, row in games.iterrows():
-			sumTotal += 1
+		for _, row in games.iterrows():
 			win = row[3]
 			dealerID = row[0]
-			if (win == 'WIN'):
-				sumWins += 1
-			
-			if (dealerID != currentDealerID):
-				dealers.append(countDealers)
-				winsRate.append((sumWins / sumTotal) * 100)
-				currentDealerID = dealerID
-				countDealers += 1
-	
-		self.plot(dealers, winsRate, name)
+			yGames.append(countGames)
+			winsRate.append((sumWins / sumTotal) * 100)
 
-	def plot(self, x, y, name):
-		plt.plot(x, y)
+			if (dealerID != currentDealerID):
+				plt.plot(yGames, winsRate)
+
+				sumTotal = 1
+				sumWins = 0
+				winsRate = []
+				yGames = []
+				countGames = 0
+				currentDealerID = dealerID
+			else:
+				countGames += 1
+				sumTotal += 1
+				if (win == 'WIN'):
+					sumWins += 1
+		
 		plt.ylabel('Win rate dos ' + name)
-		plt.xlabel('Dealer')
+		plt.xlabel('Jogos')
 		plt.savefig('models/bot' + str(self.bot) + '/' + name + '.png')
 		plt.close()
 
