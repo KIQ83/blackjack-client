@@ -14,7 +14,7 @@ REWARD_OK = -100
 
 E = 0.02
 
-class learning_model():
+class LearningModel():
 
 	def __init__(self, modelfile):
 		self.modelfile = modelfile
