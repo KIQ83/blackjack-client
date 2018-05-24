@@ -1,4 +1,4 @@
 from analytics import CSVAnalytics
 
-bot = 20
+bot = 22
 CSVAnalytics(bot)

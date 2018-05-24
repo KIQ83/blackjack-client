@@ -40,7 +40,7 @@ class RealTimeAnalytics():
 		self.fig.canvas.flush_events()
 		plt.pause(0.5)
 
-GET_GAMES = 2000
+GET_GAMES = 500
 
 class CSVAnalytics():
 	def __init__(self, bot):
