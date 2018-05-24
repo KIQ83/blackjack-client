@@ -1,17 +1,24 @@
 import tensorflow as tf
+import tflearn
 import tensorflow.contrib.slim as slim
 import numpy as np
 
 class agent():
 
-	def __init__(self, lr=0.001, s_size=15):
+	def __init__(self, lr=0.001, sumSize=2,cardsSize=13):
 
-		self.input = tf.placeholder(tf.float32, (None,s_size), name='input')
-		#self.action_holder = tf.placeholder(tf.float32, (None,), name='actions')
+		self.inputSums = tf.placeholder(tf.int32, (None, sumSize), name='inputSums')
+		self.inputCards = tf.placeholder(tf.float32, (None,cardsSize), name='inputCards')
+
 		self.reward_holder = tf.placeholder(tf.float32, (None,), name='reward')
 
-		hidden_1 = tf.layers.dense(self.input, 50, activation=tf.nn.relu) 
-		hidden_2 = tf.layers.dense(hidden_1, 30, activation=tf.nn.relu) 
+		hiddenHotEncoding = slim.one_hot_encoding(self.inputSums, 170)
+		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu) 
+
+		#hidden_1 = tf.concat([hiddenHotEncoding, hiddenCards], 1)
+		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
+
+		hidden_2 = tflearn.layers.merge_ops.merge(tensors_list, mode, axis=1, name='Merge')
 
 		self.output = tf.layers.dense(hidden_2, 1, activation=tf.nn.sigmoid) 
 
