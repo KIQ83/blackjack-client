@@ -8,7 +8,7 @@ from input import TableState
 from analytics import RealTimeAnalytics
 from learning_model import LearningModel
 
-sleepTime=0.2
+sleepTime=0.1
 
 class Bot(object):
 
