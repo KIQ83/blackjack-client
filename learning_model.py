@@ -21,7 +21,7 @@ class LearningModel():
 
 		tf.reset_default_graph() #Clear the Tensorflow graph.
 
-		self.myAgent = agent(lr=0.001, sumSize=2, cardsSize=13) #Load the agent.
+		self.myAgent = agent(lr=0.001, sumSize=28, cardsSize=13) #Load the agent.
 		self.weights = tf.trainable_variables()[0] #The weights we will evaluate to look into the network.
 
 		self.saver = tf.train.Saver()
@@ -48,7 +48,8 @@ class LearningModel():
 			action = np.random.randint(N_ACTIONS)
 		else:
 			print('escolha treinada')
-			chose = self.sess.run(self.myAgent.output,feed_dict={self.myAgent.inputSums:[s[:2]], self.myAgent.inputCards:[s[2:]]})
+			hotEncodedState = self.myAgent.convertToHotEncodedState(s)
+			chose = self.sess.run(self.myAgent.output,feed_dict={self.myAgent.inputSums:[hotEncodedState[:28]], self.myAgent.inputCards:[hotEncodedState[28:]]})
 			print('prob stand:', chose)
 			action = (not (not np.random.rand(1) < chose))
 
@@ -91,7 +92,8 @@ class LearningModel():
 
 		#Update the network.
 		#feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
-		feed_dict={self.myAgent.reward_holder:[reward], self.myAgent.inputSums:[s[:2]], self.myAgent.inputCards:[s[2:]]}
+		hotEncodedState = self.myAgent.convertToHotEncodedState(s)
+		feed_dict={self.myAgent.reward_holder:[reward], self.myAgent.inputSums:[hotEncodedState[:28]], self.myAgent.inputCards:[hotEncodedState[28:]]}
 		_, ww = self.sess.run([self.myAgent.train_op, self.weights], feed_dict=feed_dict)
 
 		print(ww)
