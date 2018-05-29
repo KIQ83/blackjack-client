@@ -11,7 +11,8 @@ class agent():
 		self.reward_holder = tf.placeholder(tf.float32, (None,), name='reward')
 
 		hidden_1 = tf.layers.dense(self.input, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
-		hidden_2 = tf.layers.dense(hidden_1, 30, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
+		drop_out = tf.nn.dropout(hidden_1, 0.5)
+		hidden_2 = tf.layers.dense(drop_out, 30, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
 
 		self.output = tf.layers.dense(hidden_2, 1, activation=tf.nn.sigmoid) 
 

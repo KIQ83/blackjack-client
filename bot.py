@@ -128,7 +128,7 @@ class Bot(object):
         dealerSum = utils.sumCards(dealerCards)
         playerSum = utils.sumCards(player['pile'])
         self.saveWinRate(dealerSum, playerSum, dealer, result)
-        self.analytics.sumGame(result == 'WIN')
+        # self.analytics.sumGame(result == 'WIN')
 
         self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.tableState.possibleCards, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
 
@@ -156,7 +156,7 @@ class Bot(object):
         table = self.bot.tableState()
         if (self.currentDealerId == None or self.currentDealerId != table['dealer']['id']):
             print("New Dealer!! Welcome to the table my friend!")
-            self.analytics.changeDealer()
+            # self.analytics.changeDealer()
             # new Dealer! Will reset cards counting
             self.cumulateTableState = TableState()
             self.currentDealerId = table['dealer']['id']
