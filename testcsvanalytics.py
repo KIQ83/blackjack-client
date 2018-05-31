@@ -1,6 +1,7 @@
-from analytics import CSVAnalytics
+from analytics import CSVAnalytics, RampAnalytics
 import sys
 
-print(sys.argv)
+
 bot = sys.argv[1]
 CSVAnalytics(bot)
+RampAnalytics(bot)
