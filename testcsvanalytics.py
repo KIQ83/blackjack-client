@@ -1,4 +1,6 @@
 from analytics import CSVAnalytics
+import sys
 
-bot = 22
+print(sys.argv)
+bot = sys.argv[1]
 CSVAnalytics(bot)

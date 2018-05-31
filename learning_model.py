@@ -94,7 +94,7 @@ class LearningModel():
 		feed_dict={self.myAgent.reward_holder:[reward], self.myAgent.input:[s]}
 		_, ww = self.sess.run([self.myAgent.train_op, self.weights], feed_dict=feed_dict)
 
-		print(ww)
+		# print(ww)
 
 		self.save()
 

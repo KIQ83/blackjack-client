@@ -5,7 +5,7 @@ import utils
 from input import Input
 from input import Action
 from input import TableState
-from analytics import RealTimeAnalytics
+# from analytics import RealTimeAnalytics
 from learning_model import LearningModel
 
 sleepTime=0.1
@@ -27,7 +27,7 @@ class Bot(object):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        self.analytics = RealTimeAnalytics()
+        # self.analytics = RealTimeAnalytics()
 
         self.learning_model = LearningModel('./models/'+modelname+'/'+modelname+'.ckpt')
 
