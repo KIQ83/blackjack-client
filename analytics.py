@@ -2,14 +2,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class RampAnalytics():
-	def __init__(self, bot):
+	def __init__(self, bot, last = 0):
 		self.bot = bot
+		self.last = int(last)
 		self.filename = 'models/bot' + str(bot) + '/win_rates_bot' + str(bot) + '.csv'
 		self.read()
 
 	def read(self):
 		gamesDF = pd.read_csv(self.filename)
-		self.sumGames(gamesDF, 'Rampa de jogos')
+		name = 'Rampa de jogos'
+		if (self.last):
+			gamesDF = gamesDF.tail(self.last)
+			name = 'Rampa dos ultimos' + str(self.last) + ' jogos'
+
+		self.sumGames(gamesDF, name)
 
 	def sumGames(self, games, name):
 		sumTotal = 1

@@ -5,7 +5,6 @@ import utils
 from input import Input
 from input import Action
 from input import TableState
-# from analytics import RealTimeAnalytics
 from learning_model import LearningModel
 
 sleepTime=0.1
@@ -27,7 +26,6 @@ class Bot(object):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        # self.analytics = RealTimeAnalytics()
 
         self.learning_model = LearningModel('./models/'+modelname+'/'+modelname+'.ckpt')
 
@@ -128,7 +126,6 @@ class Bot(object):
         dealerSum = utils.sumCards(dealerCards)
         playerSum = utils.sumCards(player['pile'])
         self.saveWinRate(dealerSum, playerSum, dealer, result)
-        # self.analytics.sumGame(result == 'WIN')
 
         self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.tableState.possibleCards, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
 
@@ -156,7 +153,6 @@ class Bot(object):
         table = self.bot.tableState()
         if (self.currentDealerId == None or self.currentDealerId != table['dealer']['id']):
             print("New Dealer!! Welcome to the table my friend!")
-            # self.analytics.changeDealer()
             # new Dealer! Will reset cards counting
             self.cumulateTableState = TableState()
             self.currentDealerId = table['dealer']['id']
