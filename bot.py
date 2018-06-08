@@ -5,7 +5,6 @@ import utils
 from input import Input
 from input import Action
 from input import TableState
-from analytics import RealTimeAnalytics
 from learning_model import LearningModel
 
 sleepTime=0.1
@@ -27,7 +26,6 @@ class Bot(object):
         self.numberOfGames = numberOfGames
         self.playerName = playerName
         self.bot = Player()
-        #self.analytics = RealTimeAnalytics()
 
         self.learning_model = LearningModel('./models/'+modelname+'/'+modelname+'.ckpt')
 
@@ -72,10 +70,10 @@ class Bot(object):
             currentInput = Input(self.playerName, self.cumulateTableState.clone())
             currentInput.applyTable(table)
 
-            shouldHit = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards)
+            shouldStand = self.learning_model.decide(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards)
 
             # playing agains the decided action
-            if (not shouldHit):
+            if (not shouldStand):
                 print("HIT ME!")
                 self.bot.hit()
                 currentInput.action = Action.HIT
@@ -93,7 +91,7 @@ class Bot(object):
 
             # this means the player hit, and is not busted
             if (player['state'] == 'Playing'):
-                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards, 0, 0, shouldHit, False, None)
+                self.learning_model.feed_reward(currentInput.playerSum, currentInput.dealerSum, currentInput.tableState.possibleCards, 0, 0, shouldStand, False, None)
 
 
         print("Ok, that's it for me. I finish my play")
@@ -119,28 +117,15 @@ class Bot(object):
         if (not isWinner):
             result = 'LOSS'
 
-        for gameInput in self.gameInputs:
-            gameInput.format()
-
         dealerCards = []
         dealerCards.append(dealer['shown'])
         dealerCards.append(dealer['hidden'])
         dealerSum = utils.sumCards(dealerCards)
         playerSum = utils.sumCards(player['pile'])
-        self.saveWinRate(dealerSum, playerSum, dealer, result)
-        #self.analytics.sumGame(result == 'WIN')
+        utils.saveWinRate(self.modelname, dealerSum, playerSum, dealer, result)
 
         self.learning_model.feed_reward(lastGameInput.playerSum, lastGameInput.dealerSum, lastGameInput.tableState.possibleCards, playerSum, dealerSum, lastGameInput.action.value, True, isWinner)
-
-
-    def saveWinRate(self, dealerSum, playerSum, dealer, result):
-        # keeping track of win rates
-        f = open('./models/'+self.modelname+'/win_rates_'+self.modelname+'.csv','a')
-        input = [dealer['id'], dealerSum, playerSum, result]
-        print(str(input))
-        f.write(str(dealer['id']) + "," + str(dealerSum) + ',' + str(playerSum) + "," + result + '\n')
-        f.close()
-         
+  
 
     def prepareForNextGame(self):
         table = self.bot.tableState()
@@ -156,7 +141,6 @@ class Bot(object):
         table = self.bot.tableState()
         if (self.currentDealerId == None or self.currentDealerId != table['dealer']['id']):
             print("New Dealer!! Welcome to the table my friend!")
-            #self.analytics.changeDealer()
             # new Dealer! Will reset cards counting
             self.cumulateTableState = TableState()
             self.currentDealerId = table['dealer']['id']

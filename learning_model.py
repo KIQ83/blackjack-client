@@ -5,7 +5,6 @@ from math import log
 
 from agent import agent
 
-N_STATES = 15
 N_ACTIONS = 2
 
 REWARD_STAND = 200
@@ -44,32 +43,23 @@ class LearningModel():
 		# Choose either a random action or one from our network.
 		e = E
 		if np.random.rand(1) < e:
-			print('escolha random')
+			# choosing randomly
 			action = np.random.randint(N_ACTIONS)
 		else:
-			print('escolha treinada')
 			hotEncodedState = self.myAgent.convertToHotEncodedState(s)
 			chose = self.sess.run(self.myAgent.output,feed_dict={self.myAgent.inputSums:[hotEncodedState[:28]], self.myAgent.inputCards:[hotEncodedState[28:]]})
-			print('prob stand:', chose)
 			action = (not (not np.random.rand(1) < chose))
 
-		print(action)
 		return action
 
-	def feed_reward(self, playerSum, dealerSum, cardProbabilities, finalPlayerSum, finalDealerSum, action, gameEnded, isWinner):
+	def feed_reward(self, playerSum, dealerSum, cardProbabilities, finalPlayerSum, finalDealerSum, decidedToStand, gameEnded, isWinner):
 		s = [playerSum, dealerSum]
 		for prob in cardProbabilities:
 			s.append(prob)
 
-		print('---')
-		print('action:', action)
-		print('acabou:', gameEnded)
-		print('ganhou:', isWinner)
-		print('---')
-
 		if (gameEnded):
 			if (isWinner):
-				if (action): # stand
+				if (decidedToStand): # stand
 					reward = REWARD_STAND
 				else: # hit
 					reward = REWARD_HIT
@@ -81,22 +71,16 @@ class LearningModel():
 					diff = abs(finalDealerSum - finalPlayerSum) + 1
 				reward = round(log(diff, 10) * 300)
 
-				if (action): # stand
+				if (decidedToStand): # stand
 					reward = -reward
-				print('perdeu por', diff)
-				print('reward', reward)
-				# reward = REWARD_LOSS
 		else:
-			if (not action): # hit
+			if (not decidedToStand): # hit
 				reward = REWARD_OK
 
 		#Update the network.
-		#feed_dict={self.myAgent.reward_holder:[reward],self.myAgent.action_holder:[action],self.myAgent.state_in:s}
 		hotEncodedState = self.myAgent.convertToHotEncodedState(s)
 		feed_dict={self.myAgent.reward_holder:[reward], self.myAgent.inputSums:[hotEncodedState[:28]], self.myAgent.inputCards:[hotEncodedState[28:]]}
 		_, ww = self.sess.run([self.myAgent.train_op, self.weights], feed_dict=feed_dict)
-
-		print(ww)
 
 		self.save()
 

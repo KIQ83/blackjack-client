@@ -63,3 +63,11 @@ def printCards(cards):
     for card in cards:
         cardsDisplay += cardDisplay(card) + ","
     print(cardsDisplay + " that gives a total of " + str(cardSum))
+
+def saveWinRate(modelName, dealerSum, playerSum, dealer, result):
+    # keeping track of win rates
+    f = open('./models/'+modelName+'/win_rates_'+modelName+'.csv','a')
+    input = [dealer['id'], dealerSum, playerSum, result]
+    print(str(input))
+    f.write(str(dealer['id']) + "," + str(dealerSum) + ',' + str(playerSum) + "," + result + '\n')
+    f.close() 
