@@ -12,13 +12,13 @@ class agent():
 		self.inputSums = tf.placeholder(tf.float32, (None, sumSize), name='inputSums')
 		self.inputCards = tf.placeholder(tf.float32, (None,cardsSize), name='inputCards')
 
-
-		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu) 
-		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu) 
+		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
+		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
 
 		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
+		dropout = tf.nn.dropout(hidden_1, 0.5)
 
-		self.output = tf.layers.dense(hidden_1, 1, activation=tf.nn.sigmoid) 
+		self.output = tf.layers.dense(dropout, 1, activation=tf.nn.sigmoid) 
 
 		self.reward_holder = tf.placeholder(tf.float32, (None,), name='reward')
 
