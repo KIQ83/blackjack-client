@@ -20,7 +20,7 @@ class LearningModel():
 
 		tf.reset_default_graph() #Clear the Tensorflow graph.
 
-		self.myAgent = agent(lr=0.001, sumSize=28, cardsSize=13) #Load the agent.
+		self.myAgent = agent(lr=0.001) #Load the agent.
 		self.weights = tf.trainable_variables()[0] #The weights we will evaluate to look into the network.
 
 		self.saver = tf.train.Saver()

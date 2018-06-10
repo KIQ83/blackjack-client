@@ -3,17 +3,24 @@ import tflearn
 import tensorflow.contrib.slim as slim
 import numpy as np
 
+# number of neurons representing the player and dealer sum (with one hot encoding)
+CARDS_SUM_WITH_HOT_ENCODING_NEURONS_COUNT = 28
+# number of neurons representing the card probabilities
+CARDS_PROBABILITY_NEURONS_COUNT = 13
+
 # Agent is responsible defining our neural network
-# he is the one 
+# He is the one describing how our input layer is build,
+#  how each layer connects to the next, what loss and optimizer function we are using,
+#  and how the rewards are applied to the network
 class agent():
 
-	def __init__(self, lr=0.001, sumSize=28,cardsSize=13):
+	def __init__(self, lr=0.001):
+		# 
+		self.inputSums = tf.placeholder(tf.float32, (None, CARDS_SUM_WITH_HOT_ENCODING_NEURONS_COUNT), name='inputSums')
+		self.inputCards = tf.placeholder(tf.float32, (None,CARDS_PROBABILITY_NEURONS_COUNT), name='inputCards')
 
-		self.inputSums = tf.placeholder(tf.float32, (None, sumSize), name='inputSums')
-		self.inputCards = tf.placeholder(tf.float32, (None,cardsSize), name='inputCards')
-
-		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
-		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
+		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.5)) 
+		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.5)) 
 
 		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
 		dropout = tf.nn.dropout(hidden_1, 0.5)
