@@ -19,8 +19,8 @@ class agent():
 		self.inputSums = tf.placeholder(tf.float32, (None, CARDS_SUM_WITH_HOT_ENCODING_NEURONS_COUNT), name='inputSums')
 		self.inputCards = tf.placeholder(tf.float32, (None,CARDS_PROBABILITY_NEURONS_COUNT), name='inputCards')
 
-		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.5)) 
-		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.5)) 
+		hiddenHotEncoding = tf.layers.dense(self.inputSums, 180, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
+		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)) 
 
 		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
 		dropout = tf.nn.dropout(hidden_1, 0.75)
