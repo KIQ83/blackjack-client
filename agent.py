@@ -23,7 +23,7 @@ class agent():
 		hiddenCards = tf.layers.dense(self.inputCards, 50, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.5)) 
 
 		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
-		dropout = tf.nn.dropout(hidden_1, 0.5)
+		dropout = tf.nn.dropout(hidden_1, 0.75)
 
 		self.output = tf.layers.dense(dropout, 1, activation=tf.nn.sigmoid) 
 
