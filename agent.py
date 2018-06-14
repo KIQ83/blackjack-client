@@ -27,7 +27,7 @@ class agent():
 		hidden_1 = tflearn.layers.merge_ops.merge([hiddenHotEncoding, hiddenCards], 'concat', axis=1, name='Merge')
 		#dropout = tf.nn.dropout(hidden_1, 0.75)
 
-		self.output = tf.layers.dense(hideen_1, 1, activation=tf.nn.sigmoid) 
+		self.output = tf.layers.dense(hidden_1, 1, activation=tf.nn.sigmoid) 
 
 		self.reward_holder = tf.placeholder(tf.float32, (None,), name='reward')
 
