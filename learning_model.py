@@ -5,12 +5,16 @@ from math import log
 
 from agent import agent
 
+# Number of possible actions to take
 N_ACTIONS = 2
 
+# Reward values for feeding the model
 REWARD_STAND = 200
 REWARD_HIT = -200
+# Reward OK is used when the player HIT and hasn't got busted
 REWARD_OK = -100
 
+# This variable indicates the probability of completely ignoring the model and ramdomly deciding what to do
 E = 0.02
 
 class LearningModel():

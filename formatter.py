@@ -1,5 +1,6 @@
 import json
 
+#Class responsible for formating messages to be sent to the game server
 def formatRegister(playerName):
     return {
 		'action': 'Register',
