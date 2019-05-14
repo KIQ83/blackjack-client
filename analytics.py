@@ -5,7 +5,7 @@ class RampAnalytics():
 	def __init__(self, bot, last = 0):
 		self.bot = bot
 		self.last = int(last)
-		self.filename = 'models/bot' + str(bot) + '/win_rates_bot' + str(bot) + '.csv'
+		self.filename = 'models/' + str(bot) + '/win_rates_' + str(bot) + '.csv'
 		self.read()
 
 	def read(self):
@@ -43,7 +43,7 @@ class RampAnalytics():
 		plt.ylabel('Win rate')
 		plt.xlabel('Dealers')
 		plt.plot(dealers, winsRate)
-		plt.savefig('models/bot' + str(self.bot) + '/' + name + '.png')
+		plt.savefig('models/' + str(self.bot) + '/' + name + '.png')
 		plt.close()
 
 GET_GAMES = 500
@@ -51,7 +51,7 @@ GET_GAMES = 500
 class CSVAnalytics():
 	def __init__(self, bot):
 		self.bot = bot
-		self.filename = 'models/bot' + str(bot) + '/win_rates_bot' + str(bot) + '.csv'
+		self.filename = 'models/' + str(bot) + '/win_rates_' + str(bot) + '.csv'
 		self.read()
 
 	def read(self):
@@ -92,6 +92,6 @@ class CSVAnalytics():
 		
 		plt.ylabel('Win rate dos ' + name)
 		plt.xlabel('Jogos')
-		plt.savefig('models/bot' + str(self.bot) + '/' + name + '.png')
+		plt.savefig('models/' + str(self.bot) + '/' + name + '.png')
 		plt.close()
 
